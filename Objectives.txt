@@ -1,0 +1,17 @@
+System: 
+Generate a solar System with Settings available.
+I want to be able to setup planets in moving orbits based on simulations, develop a tool to create them and visualize the orbits, and so on. 
+
+Planets:
+Each planet should have its own geography and atmosphere. 
+The first would involve procedural generation methods, such as marching cubes, and others. The second cloud generation and light refraction.
+
+Player: 
+Make a character which can move through the space and interact with the planets
+
+Animals: 
+When approaching a planet, maybe even when approaching certain biome of a planet, certain animals should appear. 
+For exemple: birds, fishes, and other creatures.
+
+Boids:
+Some of the previous animals should have boid-like behavior, simply relying on ray-based collision detection. Others i would like to be more advanced, to use neural networks and genes, and perhaps setup some kind of evolving environment with both predators and prey. 
