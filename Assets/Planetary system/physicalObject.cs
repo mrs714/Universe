@@ -21,8 +21,8 @@ public class PhysicalObject : MonoBehaviour
     public int pathSteps = 10000;
     
 
-    Rigidbody rb;
-    PhysicsSimulation physicsSimulation;
+    protected Rigidbody rb;
+    protected PhysicsSimulation physicsSimulation;
 
     public void Start()
     {
