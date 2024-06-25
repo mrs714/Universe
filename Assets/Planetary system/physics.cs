@@ -68,11 +68,24 @@ public class PhysicsSimulation : MonoBehaviour
     To do so, it saves the actual state of every object in the scene, and then, given a number of steps, it calculates the future state for all objects in the scene.
     Then, it reverses the state of the objects to the actual state, and returns a list of points that represent the path of the object.
     */
-    public Vector3[] GetObjectTrajectory(PhysicalObject physicalObject, int steps = 10)
+    public struct TrajectoryResult
+    {
+        public Vector3[] Path;
+        public int Collision;
+
+        public TrajectoryResult(Vector3[] path, int collision)
+        {
+            Path = path;
+            Collision = collision;
+        }
+    }
+    public TrajectoryResult GetObjectTrajectory(PhysicalObject physicalObject, int steps = 10)
     {
         Vector3[] path = new Vector3[steps];
         Vector3[] initialPositions = new Vector3[physicalObjects.Length];
         Vector3[] initialVelocities = new Vector3[physicalObjects.Length];
+
+        int collision = -1;
 
         // Find the index for the object we're plotting the path for
         int physicalObjectIndex = 0;
@@ -97,6 +110,23 @@ public class PhysicsSimulation : MonoBehaviour
         {
             UpdateObjects(move: false); // Update the objects without using the rigidbody
             path[i] = physicalObjects[physicalObjectIndex].position; // Save the position of the object we're plotting the path for
+            
+            // Check for collisions
+            for (int j = 0; j < physicalObjects.Length; j++)
+            {
+                if (j != physicalObjectIndex)
+                {
+                    if (CheckCollision(physicalObjects[physicalObjectIndex], physicalObjects[j]))
+                    {
+                        collision = i;
+                        break;
+                    }
+                }
+            }
+            if (collision != -1)
+            {
+                break;
+            }
         }
 
         // Reset the state of the objects
@@ -104,9 +134,17 @@ public class PhysicsSimulation : MonoBehaviour
         {
             physicalObjects[i].position = initialPositions[i];
             physicalObjects[i].velocity = initialVelocities[i];
-        }    
+        }
 
-        return path;
+
+
+        return new TrajectoryResult(path, collision);
+    }
+
+    public Boolean CheckCollision(PhysicalObject physicalObject, PhysicalObject otherPhysicalObject)
+    {
+        float distance = (physicalObject.position - otherPhysicalObject.position).magnitude;
+        return distance < physicalObject.radius + otherPhysicalObject.radius;
     }
 
 

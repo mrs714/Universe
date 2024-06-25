@@ -6,12 +6,20 @@ public class PhysicalObject : MonoBehaviour
     [Header("Physical Object")]
     public string objectName;
     public float mass = 10f;
+    [NonSerialized] // Do not allow the user to change the radius of the object
+    public float radius;
+
+
     public Vector3 position;
     public Vector3 velocity;
     public Vector3 force;
 
     [Header("Visuals")]
     public Boolean showPath = false;
+    // Slider for step count
+    [Range(1, 10000)]
+    public int pathSteps = 100;
+    
 
     Rigidbody rb;
     PhysicsSimulation physicsSimulation;
@@ -21,6 +29,7 @@ public class PhysicalObject : MonoBehaviour
         physicsSimulation = FindObjectsByType<PhysicsSimulation>(FindObjectsSortMode.None)[0]; // Find the physics simulation object
 
         position = transform.position;        
+        radius = transform.localScale.x / 2;
         rb = GetComponent<Rigidbody>();
 
         // Rigidbody setup
@@ -55,29 +64,28 @@ public class PhysicalObject : MonoBehaviour
         position = transform.position;
     }
 
-
-
-
-    public void OnDrawGizmos()
-    {
-        if (showPath)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(position, 0.1f);
-        }
-    }
-
     public void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.blue;
-        Vector3[] objectPath = physicsSimulation.GetObjectTrajectory(this, 10000);
-        
-        for (int i = 0; i < objectPath.Length - 1; i++)
-        {
-            Gizmos.DrawLine(objectPath[i], objectPath[i + 1]);
-        }
-        
-    }
-    
+        if (showPath && physicsSimulation != null)
+        {                
+            Gizmos.color = Color.blue;
+            PhysicsSimulation.TrajectoryResult trajectoryResult = physicsSimulation.GetObjectTrajectory(this, pathSteps);
+            
+            Vector3[] objectPath = trajectoryResult.Path;
+            int collision = trajectoryResult.Collision;
 
+            int predictionLength = collision != -1 ? collision : objectPath.Length - 1;
+
+            for (int i = 0; i < predictionLength; i++)
+            {
+                Gizmos.DrawLine(objectPath[i], objectPath[i + 1]);
+            }
+
+            if (collision != -1)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(objectPath[collision], radius);
+            }
+        }        
+    }
 }
