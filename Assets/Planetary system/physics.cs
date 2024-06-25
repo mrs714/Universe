@@ -6,9 +6,15 @@ using UnityEngine;
 public class PhysicsSimulation : MonoBehaviour
 {
     /* 
-    This script is used to setup all the planetary bodies, and calculate the physics of every object in the scene: 
+    This script is used to calculate the physics of every object in the scene: 
     It does so by calculating the force of gravity between every object in the scene.
     This force is then used to apply to the rigidbody of the object.
+
+    It also provides the following tools:
+    - GetForce(PhysicalObject physicalObject): Returns the force applied to a physical object by all other objects in the scene.
+    - GetObjectTrajectory(PhysicalObject physicalObject, int steps = 10): This function is used to plot the path of an object in the scene.
+    - CheckCollision(PhysicalObject physicalObject, PhysicalObject otherPhysicalObject): This function checks if two objects are colliding.
+    - GetStrongestNormal(PhysicalObject physicalObject): Returns the normal of the strongest force applied to the object (to get upright orientation when on the surface of a planet)
     */
 
     public float gravitationalConstant = 10f;
@@ -23,14 +29,12 @@ public class PhysicsSimulation : MonoBehaviour
         UpdateObjects();
     }
 
-
-
     void UpdateObjects(Boolean move = true)
     {
         // Calculate the force of gravity between every object in the scene
         foreach (PhysicalObject physicalObject in physicalObjects)
         {
-            physicalObject.force = GetForce(physicalObject);         
+            physicalObject.force = GetForce(physicalObject);
         }
         // Move or update every object in the scene by applying the force
         foreach (PhysicalObject physicalObject in physicalObjects)
@@ -47,19 +51,19 @@ public class PhysicsSimulation : MonoBehaviour
     */
     public Vector3 GetForce(PhysicalObject physicalObject)
     {
-            Vector3 totalForce = Vector3.zero;        
+        Vector3 totalForce = Vector3.zero;
 
-            foreach (PhysicalObject otherPhysicalObject in physicalObjects)
+        foreach (PhysicalObject otherPhysicalObject in physicalObjects)
+        {
+            if (physicalObject != otherPhysicalObject)
             {
-                if (physicalObject != otherPhysicalObject)
-                {
-                    Vector3 direction = otherPhysicalObject.position - physicalObject.position;
-                    float distance = direction.magnitude;
-                    Vector3 force = gravitationalConstant * physicalObject.mass * otherPhysicalObject.mass / Mathf.Pow(distance, 2) * direction.normalized;
+                Vector3 direction = otherPhysicalObject.position - physicalObject.position;
+                float distance = direction.magnitude;
+                Vector3 force = gravitationalConstant * physicalObject.mass * otherPhysicalObject.mass / Mathf.Pow(distance, 2) * direction.normalized;
 
-                    totalForce += force;
-                }
+                totalForce += force;
             }
+        }
         return totalForce;
     }
 
@@ -110,7 +114,7 @@ public class PhysicsSimulation : MonoBehaviour
         {
             UpdateObjects(move: false); // Update the objects without using the rigidbody
             path[i] = physicalObjects[physicalObjectIndex].position; // Save the position of the object we're plotting the path for
-            
+
             // Check for collisions
             for (int j = 0; j < physicalObjects.Length; j++)
             {
@@ -147,5 +151,26 @@ public class PhysicsSimulation : MonoBehaviour
         return distance < physicalObject.radius + otherPhysicalObject.radius;
     }
 
+    public Vector3 GetStrongestNormal(PhysicalObject physicalObject)
+    {
+        Vector3 strongestNormal = Vector3.zero;
+        float strongestForce = 0;
 
+        foreach (PhysicalObject otherPhysicalObject in physicalObjects)
+        {
+            if (physicalObject != otherPhysicalObject)
+            {
+                Vector3 direction = otherPhysicalObject.position - physicalObject.position;
+                float distance = direction.magnitude;
+                Vector3 force = gravitationalConstant * physicalObject.mass * otherPhysicalObject.mass / Mathf.Pow(distance, 2) * direction.normalized;
+                if (force.magnitude > strongestForce)
+                {
+                    strongestForce = force.magnitude;
+                    strongestNormal = force.normalized;
+                }
+            }
+        }
+
+        return strongestNormal;
+    }
 }

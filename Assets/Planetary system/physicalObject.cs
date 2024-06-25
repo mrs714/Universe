@@ -6,8 +6,8 @@ public class PhysicalObject : MonoBehaviour
     [Header("Physical Object")]
     public string objectName;
     public float mass = 10f;
-    [NonSerialized] // Do not allow the user to change the radius of the object
-    public float radius;
+    [NonSerialized]
+    public float radius; // Used for collision prediction only, not meant to be a proper mesh collider
 
 
     public Vector3 position;
@@ -17,8 +17,8 @@ public class PhysicalObject : MonoBehaviour
     [Header("Visuals")]
     public Boolean showPath = false;
     // Slider for step count
-    [Range(1, 10000)]
-    public int pathSteps = 100;
+    [Range(1, 100000)]
+    public int pathSteps = 10000;
     
 
     Rigidbody rb;
