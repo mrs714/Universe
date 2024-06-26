@@ -17,7 +17,8 @@ public class PhysicsSimulation : MonoBehaviour
     - GetStrongestNormal(PhysicalObject physicalObject): Returns the normal of the strongest force applied to the object (to get upright orientation when on the surface of a planet)
     */
 
-    public float gravitationalConstant = 10f;
+    [NonSerialized]
+    public float gravitationalConstant = 0.0001f;
     PhysicalObject[] physicalObjects;
 
     void Start()
@@ -151,10 +152,25 @@ public class PhysicsSimulation : MonoBehaviour
         return distance < physicalObject.radius + otherPhysicalObject.radius;
     }
 
-    public Vector3 GetStrongestNormal(PhysicalObject physicalObject)
+    public struct StrongestNormalResult
+    {
+        public Vector3 Normal;
+        public float Force;
+        public PhysicalObject PhysicalObject;
+
+        public StrongestNormalResult(Vector3 normal, float force, PhysicalObject physicalObject)
+        {
+            Normal = normal;
+            Force = force;
+            PhysicalObject = physicalObject;
+        }
+    }
+
+    public StrongestNormalResult GetStrongestNormal(PhysicalObject physicalObject)
     {
         Vector3 strongestNormal = Vector3.zero;
         float strongestForce = 0;
+        PhysicalObject strongestPhysicalObject = null;
 
         foreach (PhysicalObject otherPhysicalObject in physicalObjects)
         {
@@ -167,10 +183,12 @@ public class PhysicsSimulation : MonoBehaviour
                 {
                     strongestForce = force.magnitude;
                     strongestNormal = force.normalized;
+                    strongestPhysicalObject = otherPhysicalObject;
                 }
             }
         }
 
-        return strongestNormal;
+        return new StrongestNormalResult(strongestNormal, strongestForce, strongestPhysicalObject);
+        
     }
 }

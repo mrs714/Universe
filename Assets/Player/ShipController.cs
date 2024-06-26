@@ -65,9 +65,11 @@ public class ShipController : PhysicalObject
         transform.Rotate(Vector3.left, rotateY * rotationSpeed * Time.deltaTime);
         */
         // Get the normal of the strongest force applied to the object
-        Vector3 normal = physicsSimulation.GetStrongestNormal(this);
+        //strongestNormalStruct strongestNormal = GetStrongestNormal(this);
+
+
         // Make the ship upright
-        transform.rotation = Quaternion.FromToRotation(transform.up, normal) * transform.rotation;
+        //transform.rotation = Quaternion.FromToRotation(transform.up, normal) * transform.rotation;
         
     }
 

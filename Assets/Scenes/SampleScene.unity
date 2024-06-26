@@ -412,10 +412,11 @@ MonoBehaviour:
   objectName: 
   mass: 10
   position: {x: 0, y: 0, z: 0}
-  velocity: {x: 40, y: 0, z: 0}
+  velocity: {x: 40, y: -40, z: 0}
   force: {x: 0, y: 0, z: 0}
   showPath: 0
   pathSteps: 10000
+  simulationStepSize: 1
   moveSpeed: 10
   rotationSpeed: 100
   mouseSensitivity: 2
@@ -640,7 +641,7 @@ Transform:
   m_GameObject: {fileID: 784236784}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.21833, y: -13.400635, z: 1589.3}
+  m_LocalPosition: {x: -15.21833, y: -13.400635, z: 2159}
   m_LocalScale: {x: 20, y: 20, z: 20}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -659,12 +660,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectName: 
-  mass: 1000
+  mass: 3000
   position: {x: 0, y: 0, z: 0}
-  velocity: {x: 40, y: 20, z: 0}
+  velocity: {x: 42.5, y: 18.2, z: 0}
   force: {x: 0, y: 0, z: 0}
   showPath: 1
   pathSteps: 100
+  simulationStepSize: 1
 --- !u!54 &784236791
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -704,8 +706,8 @@ GameObject:
   - component: {fileID: 880418322}
   - component: {fileID: 880418321}
   - component: {fileID: 880418320}
-  - component: {fileID: 880418319}
   - component: {fileID: 880418324}
+  - component: {fileID: 880418325}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Untagged
@@ -713,25 +715,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &880418319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880418318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbf61df7e593f894790998a468970c97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectName: 
-  mass: 5000000
-  position: {x: 0, y: 0, z: 0}
-  velocity: {x: 40, y: 0, z: 0}
-  force: {x: 0, y: 0, z: 0}
-  showPath: 0
-  pathSteps: 100
 --- !u!135 &880418320
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -815,7 +798,7 @@ Transform:
   m_GameObject: {fileID: 880418318}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.21833, y: -13.400635, z: 1434.06}
+  m_LocalPosition: {x: -15.21833, y: -13.400635, z: 2003.76}
   m_LocalScale: {x: 150, y: 150, z: 150}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -848,6 +831,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &880418325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880418318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0d4ffd4f45f2e43bddb69cb9f10e2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectName: 
+  mass: 10
+  position: {x: 0, y: 0, z: 0}
+  velocity: {x: 0, y: 0, z: 0}
+  force: {x: 0, y: 0, z: 0}
+  showPath: 1
+  pathSteps: 10000
+  simulationStepSize: 3
+  gravityStrength: 10
 --- !u!1 &1195357899
 GameObject:
   m_ObjectHideFlags: 0
@@ -909,12 +913,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectName: 
-  mass: 5e+9
+  mass: 1
   position: {x: 0, y: 0, z: 0}
   velocity: {x: 0, y: 0, z: 0}
   force: {x: 0, y: 0, z: 0}
   showPath: 0
   pathSteps: 100
+  simulationStepSize: 1
 --- !u!135 &1195357902
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1048,7 +1053,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a86e6c0b75448144a9fe1a3ec514eff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravitationalConstant: 0.001
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

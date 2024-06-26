@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class PhysicalObject : MonoBehaviour
@@ -66,11 +67,14 @@ public class PhysicalObject : MonoBehaviour
     {
         position = transform.position;
     }
+    
 
     public void OnDrawGizmosSelected()
     {
         if (showPath && physicsSimulation != null)
         {                
+            position = transform.position;
+            
             // Draw the path of the object
             Gizmos.color = Color.blue;
             PhysicsSimulation.TrajectoryResult trajectoryResult = physicsSimulation.GetObjectTrajectory(this, pathSteps, simulationStepSize);
@@ -93,8 +97,9 @@ public class PhysicalObject : MonoBehaviour
 
             // Draw an arrow towards the strongest force applied to the object
             Gizmos.color = Color.green;
-            Vector3 normal = physicsSimulation.GetStrongestNormal(this);
-            Gizmos.DrawRay(transform.position, radius * 3 * normal);  
+            PhysicsSimulation.StrongestNormalResult strongestNormal = physicsSimulation.GetStrongestNormal(this);
+            float3 distance = strongestNormal.PhysicalObject.position - position;
+            Gizmos.DrawRay(transform.position, distance);
         }    
     }
 }
