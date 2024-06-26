@@ -19,6 +19,9 @@ public class PhysicalObject : MonoBehaviour
     // Slider for step count
     [Range(1, 100000)]
     public int pathSteps = 10000;
+    [Tooltip("The bigger the step size, the less accurate the path will be, but the faster it will be calculated")]
+    [Range(1, 100)]
+    public int simulationStepSize = 1;
     
 
     protected Rigidbody rb;
@@ -52,11 +55,11 @@ public class PhysicalObject : MonoBehaviour
     /*
     Updates the position of the object, letting our physics engine handle the movement of the object to plot the path
     */
-    public void UpdateObject()
+    public void UpdateObject(int stepSize = 1)
     {
         Vector3 acceleration = force / mass;
-        velocity += acceleration * Time.fixedDeltaTime;
-        position += velocity * Time.fixedDeltaTime;
+        velocity += acceleration * Time.fixedDeltaTime * stepSize;
+        position += velocity * Time.fixedDeltaTime * stepSize;
     }
 
     public void Update()
@@ -69,7 +72,7 @@ public class PhysicalObject : MonoBehaviour
         if (showPath && physicsSimulation != null)
         {                
             Gizmos.color = Color.blue;
-            PhysicsSimulation.TrajectoryResult trajectoryResult = physicsSimulation.GetObjectTrajectory(this, pathSteps);
+            PhysicsSimulation.TrajectoryResult trajectoryResult = physicsSimulation.GetObjectTrajectory(this, pathSteps, simulationStepSize);
             
             Vector3[] objectPath = trajectoryResult.Path;
             int collision = trajectoryResult.Collision;

@@ -29,7 +29,7 @@ public class PhysicsSimulation : MonoBehaviour
         UpdateObjects();
     }
 
-    void UpdateObjects(Boolean move = true)
+    void UpdateObjects(Boolean move = true, int stepSize = 1)
     {
         // Calculate the force of gravity between every object in the scene
         foreach (PhysicalObject physicalObject in physicalObjects)
@@ -42,7 +42,7 @@ public class PhysicsSimulation : MonoBehaviour
             if (move) // If done for the actual simulation, move the object (using the rigidbody);
                 physicalObject.MoveObject();
             else // If done to plot the path, update the object (without using the rigidbody)
-                physicalObject.UpdateObject();
+                physicalObject.UpdateObject(stepSize: stepSize);
         }
     }
 
@@ -83,7 +83,7 @@ public class PhysicsSimulation : MonoBehaviour
             Collision = collision;
         }
     }
-    public TrajectoryResult GetObjectTrajectory(PhysicalObject physicalObject, int steps = 10)
+    public TrajectoryResult GetObjectTrajectory(PhysicalObject physicalObject, int steps = 10, int stepSize = 1)
     {
         Vector3[] path = new Vector3[steps];
         Vector3[] initialPositions = new Vector3[physicalObjects.Length];
@@ -112,7 +112,7 @@ public class PhysicsSimulation : MonoBehaviour
         // Calculate the future state of the objects
         for (int i = 0; i < steps; i++)
         {
-            UpdateObjects(move: false); // Update the objects without using the rigidbody
+            UpdateObjects(move: false, stepSize: stepSize); // Update the objects without using the rigidbody
             path[i] = physicalObjects[physicalObjectIndex].position; // Save the position of the object we're plotting the path for
 
             // Check for collisions
