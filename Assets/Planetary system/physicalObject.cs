@@ -71,6 +71,7 @@ public class PhysicalObject : MonoBehaviour
     {
         if (showPath && physicsSimulation != null)
         {                
+            // Draw the path of the object
             Gizmos.color = Color.blue;
             PhysicsSimulation.TrajectoryResult trajectoryResult = physicsSimulation.GetObjectTrajectory(this, pathSteps, simulationStepSize);
             
@@ -89,6 +90,11 @@ public class PhysicalObject : MonoBehaviour
                 Gizmos.color = Color.red;
                 Gizmos.DrawSphere(objectPath[collision], radius);
             }
-        }        
+
+            // Draw an arrow towards the strongest force applied to the object
+            Gizmos.color = Color.green;
+            Vector3 normal = physicsSimulation.GetStrongestNormal(this);
+            Gizmos.DrawRay(transform.position, radius * 3 * normal);  
+        }    
     }
 }
