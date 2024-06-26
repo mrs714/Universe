@@ -68,20 +68,43 @@ public class PhysicalObject : MonoBehaviour
         position = transform.position;
     }
     
+    private Boolean settingChanged = true;
+    private Vector3[] objectPath = null;
+    private int collision = -1;
+    PhysicsSimulation.StrongestNormalResult strongestNormal;
+    private Vector3 distanceToStrongestNormal;
+    void OnValidate()
+    {
+        settingChanged = true;
+    }
 
+    [ExecuteInEditMode]
     public void OnDrawGizmosSelected()
     {
-        if (showPath && physicsSimulation != null)
-        {                
+        if (position != transform.position)
+        {
             position = transform.position;
+            settingChanged = true;
+        }
+
+
+        if (showPath && physicsSimulation && settingChanged)
+        {
+            PhysicsSimulation.TrajectoryResult trajectoryResult = physicsSimulation.GetObjectTrajectory(this, pathSteps, simulationStepSize);
+            objectPath = trajectoryResult.Path;
+            collision = trajectoryResult.Collision;
             
+            strongestNormal = physicsSimulation.GetStrongestNormal(this);
+            distanceToStrongestNormal = strongestNormal.PhysicalObject.position - position;
+
+            settingChanged = false;
+        }
+
+        if (showPath && physicsSimulation != null && objectPath != null)
+        {              
             // Draw the path of the object
             Gizmos.color = Color.blue;
-            PhysicsSimulation.TrajectoryResult trajectoryResult = physicsSimulation.GetObjectTrajectory(this, pathSteps, simulationStepSize);
-            
-            Vector3[] objectPath = trajectoryResult.Path;
-            int collision = trajectoryResult.Collision;
-
+        
             int predictionLength = collision != -1 ? collision : objectPath.Length - 1;
 
             for (int i = 0; i < predictionLength; i++)
@@ -97,9 +120,7 @@ public class PhysicalObject : MonoBehaviour
 
             // Draw an arrow towards the strongest force applied to the object
             Gizmos.color = Color.green;
-            PhysicsSimulation.StrongestNormalResult strongestNormal = physicsSimulation.GetStrongestNormal(this);
-            float3 distance = strongestNormal.PhysicalObject.position - position;
-            Gizmos.DrawRay(transform.position, distance);
+            Gizmos.DrawRay(transform.position, distanceToStrongestNormal);
         }    
     }
 }
