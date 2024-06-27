@@ -41,6 +41,7 @@ public class PhysicalObject : MonoBehaviour
         rb.useGravity = false;
         rb.isKinematic = false;
         rb.linearDamping = 0;
+        rb.linearVelocity = velocity; // Use the chosen starting velocity
 
     }
 
