@@ -14,6 +14,7 @@ public class Planet : PhysicalObject
         radius = transform.localScale.x / 2;
 
         mass = gravityStrength * Mathf.Pow(radius, 2) / physicsSimulation.gravitationalConstant;
+        rb.mass = mass;
     }
 
     // Update is called once per frame

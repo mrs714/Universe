@@ -40,27 +40,39 @@ public class PhysicalObject : MonoBehaviour
         rb.mass = mass;
         rb.useGravity = false;
         rb.isKinematic = false;
+        rb.linearDamping = 0;
 
     }
 
     /*
-    Updates the velocity of the rigidbody, letting the unity engine handle the movement of the object
+    Updates the velocity of the rigidbody, letting the unity engine handle the movement of the object.
+    First, we need to update the velocity of the object based on the rigidbody. If we don't do this, when a collision happens,
+    the object will keep accumulating speed even though it should be stoped. 
+    Then, we calculate the acceleration and update the velocity and position of the object.
     */
     public void MoveObject()
-    {
+    {        
+        velocity = rb.linearVelocity; 
+        // Apply the force to the object
         Vector3 acceleration = force / mass;
         velocity += acceleration * Time.fixedDeltaTime;
         rb.linearVelocity = velocity;
     }
 
     /*
-    Updates the position of the object, letting our physics engine handle the movement of the object to plot the path
+    Updates the position of the object, letting our physics engine handle the movement of the object to plot the path.
     */
     public void UpdateObject(int stepSize = 1)
     {
         Vector3 acceleration = force / mass;
         velocity += acceleration * Time.fixedDeltaTime * stepSize;
         position += velocity * Time.fixedDeltaTime * stepSize;
+    }
+
+    public void MoveTo(Vector3 position)
+    {
+        transform.position = position;
+        this.position = position;
     }
 
     public void Update()

@@ -191,4 +191,10 @@ public class PhysicsSimulation : MonoBehaviour
         return new StrongestNormalResult(strongestNormal, strongestForce, strongestPhysicalObject);
         
     }
+
+    public PhysicalObject[] GetPhysicalObjects()
+    {
+        return physicalObjects;
+    }
+
 }
