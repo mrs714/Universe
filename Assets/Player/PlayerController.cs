@@ -1,9 +1,8 @@
 using System;
-using Unity.Mathematics;
 using UnityEditor.EditorTools;
 using UnityEngine;
 
-public class ShipController : PhysicalObject
+public class PlayerController : PhysicalObject
 {
 
     [Header("Settings")]
@@ -21,20 +20,10 @@ public class ShipController : PhysicalObject
     [Tooltip("How many frames until the scene is centered around the player")]
     public int centeringInterval = 100;
 
-    // Get the children object named Door
-    private GameObject door;
-    float closedDoorX = 0;
-    float openDoorX = 0;
-    Boolean doorOpen = false;
-    Boolean doorObjective = false;
-
     new void Start()
     {
         base.Start();
         cameraTransform = Camera.main.transform;
-        door = transform.Find("ShipDoor").gameObject;
-        closedDoorX = door.transform.localRotation.x;
-        openDoorX = closedDoorX -120f;
     }
 
     new void Update()
@@ -42,22 +31,13 @@ public class ShipController : PhysicalObject
         base.Update();
         HandleMovement();
         HandleRotation();
-        HandleDoor();
-
-        // Every 100 frames:
-        if (Time.frameCount % centeringInterval == 0)
-        {
-            if (doorObjective)
-            {
-                doorObjective = false;
-            }
-            else
-            {
-                doorObjective = true;
-            }
-        }
     }
 
+    void LateUpdate()
+    {
+        HandleCentering();
+        FollowCamera();
+    }
 
     void HandleMovement()
     {
@@ -105,43 +85,32 @@ public class ShipController : PhysicalObject
         
     }
 
-    void OpenDoor()
+    void FollowCamera()
     {
-        doorObjective = true;
+         // Calculate the new camera position based on the player's position and rotation
+        Vector3 desiredPosition = transform.position + transform.TransformDirection(cameraOffset);
+        cameraTransform.position = desiredPosition;
+
+        // Make the camera look at the player
+        cameraTransform.LookAt(transform.position + transform.TransformDirection(Vector3.forward * 2));
+    
     }
 
-    void CloseDoor()
+    // Move all the objects in the scene so that the player is in the center of the scene
+    void HandleCentering()
     {
-        doorObjective = false;
-    }
-
-    void HandleDoor()
-    {
-        if (doorObjective && !doorOpen)
+        // every 100 frames
+        if (Time.frameCount % centeringInterval != 0) return;
+        // Calculate the offset between the player and the center of the scene
+        PhysicalObject[] physicalObjects = physicsSimulation.GetPhysicalObjects();
+        Vector3 offset = this.position;
+        
+        // Move all the objects in the scene so that the player is in the center of the scene
+        for (int i = 0; i < physicalObjects.Length; i++)
         {
-            if (door.transform.localRotation.x > openDoorX)
-            {
-                door.transform.Rotate(Vector3.right, -1/(180 * math.PI));
-            }
-            else
-            {
-                doorOpen = true;
-            }
-        }
-        if (!doorObjective && doorOpen)
-        {
-            if (door.transform.localRotation.x < closedDoorX)
-            {
-                door.transform.Rotate(Vector3.right, -1/(18 * math.PI));
-            }
-            else
-            {
-                doorOpen = false;
-            }
+            physicalObjects[i].MoveTo(physicalObjects[i].position - offset);
         }
     }
-
-
 }
 
 
