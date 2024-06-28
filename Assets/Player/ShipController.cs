@@ -3,7 +3,7 @@ using Unity.Mathematics;
 using UnityEditor.EditorTools;
 using UnityEngine;
 
-public class ShipController : PhysicalObject
+public class ShipController : SmallPhysicalObject
 {
 
     [Header("Settings")]
@@ -18,10 +18,12 @@ public class ShipController : PhysicalObject
     public Vector3 cameraOffset = new Vector3(0, 2, -5);
     [NonSerialized]
     public Transform cameraTransform;
-    [Tooltip("How many frames until the scene is centered around the player")]
-    public int centeringInterval = 100;
+
+    public int centeringInterval = 100; // remove
 
     // Get the children object named Door
+    [SerializeField]
+    private float doorSpeed = 0.25f;
     private GameObject door;
     float closedDoorX = 0;
     float openDoorX = 0;
@@ -33,29 +35,17 @@ public class ShipController : PhysicalObject
         base.Start();
         cameraTransform = Camera.main.transform;
         door = transform.Find("ShipDoor").gameObject;
-        closedDoorX = door.transform.localRotation.x;
-        openDoorX = closedDoorX -120f;
+        closedDoorX = door.transform.localRotation.x * Mathf.Rad2Deg * 2;
+        openDoorX = closedDoorX -100f;
     }
 
     new void Update()
     {
         base.Update();
-        HandleMovement();
-        HandleRotation();
+        //HandleMovement();
+        //HandleRotation();
         HandleDoor();
 
-        // Every 100 frames:
-        if (Time.frameCount % centeringInterval == 0)
-        {
-            if (doorObjective)
-            {
-                doorObjective = false;
-            }
-            else
-            {
-                doorObjective = true;
-            }
-        }
     }
 
 
@@ -96,13 +86,7 @@ public class ShipController : PhysicalObject
         transform.Rotate(Vector3.up, rotateX * rotationSpeed * Time.deltaTime);
         transform.Rotate(Vector3.left, rotateY * rotationSpeed * Time.deltaTime);
         transform.Rotate(Vector3.forward, rotateZ * rotationSpeed * Time.deltaTime);
-        
-        // Get the normal of the strongest force applied to the object
-        PhysicsSimulation.StrongestNormalResult strongestNormal = physicsSimulation.GetStrongestNormal(this);
-
-        // Make the ship upright
-        transform.rotation = Quaternion.FromToRotation(transform.up, strongestNormal.Normal) * transform.rotation;
-        
+                
     }
 
     void OpenDoor()
@@ -119,9 +103,11 @@ public class ShipController : PhysicalObject
     {
         if (doorObjective && !doorOpen)
         {
-            if (door.transform.localRotation.x > openDoorX)
+            if (door.transform.localRotation.x * Mathf.Rad2Deg * 2 > openDoorX)
             {
-                door.transform.Rotate(Vector3.right, -1/(180 * math.PI));
+                // Rotate half degree each time until the door is open
+                door.transform.Rotate(Vector3.right, -doorSpeed);
+
             }
             else
             {
@@ -130,9 +116,10 @@ public class ShipController : PhysicalObject
         }
         if (!doorObjective && doorOpen)
         {
-            if (door.transform.localRotation.x < closedDoorX)
+            if (door.transform.localRotation.x * Mathf.Rad2Deg * 2 < closedDoorX)
             {
-                door.transform.Rotate(Vector3.right, -1/(18 * math.PI));
+                // Rotate half degree each time until the door is closed
+                door.transform.Rotate(Vector3.right, doorSpeed);
             }
             else
             {
@@ -140,8 +127,4 @@ public class ShipController : PhysicalObject
             }
         }
     }
-
-
 }
-
-
