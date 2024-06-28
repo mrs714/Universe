@@ -10,8 +10,9 @@ public class SmallPhysicalObject : PhysicalObject
 
     UnityEngine.Object[] CollidingObjects;
 
-    new public void MoveObject()
+    public override void MoveObject()
     {        
+        print("MoveObjectModified");
         velocity = rb.linearVelocity; 
         // Apply the force to the object
         Vector3 acceleration = force / mass;

@@ -51,8 +51,9 @@ public class PhysicalObject : MonoBehaviour
     the object will keep accumulating speed even though it should be stoped. 
     Then, we calculate the acceleration and update the velocity and position of the object.
     */
-    public void MoveObject()
+    public virtual void MoveObject()
     {        
+        print("MoveObject");
         velocity = rb.linearVelocity; 
         // Apply the force to the object
         Vector3 acceleration = force / mass;
